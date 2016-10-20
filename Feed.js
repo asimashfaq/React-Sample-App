@@ -16,13 +16,17 @@ ActivityIndicator
 export class Feed extends Component{
     constructor(props){
         super(props);
-        var ds = new ListView.DataSource({
-            rowHasChanged: (r1,r2) => r1 != r2
-        })
+
         this.state= {
-         dataSource: ds.cloneWithRows(['A','B','C']),
-            showProgress:true
+            articles: [],
+            showProgress:true,
+            count: 20,
+            start: 0
         }
+        this.dataSource = new ListView.DataSource({
+            rowHasChanged: (row1, row2) => row1 !== row2
+        });
+
     }
 
     renderRow(rowData){
@@ -30,8 +34,8 @@ export class Feed extends Component{
         flex:1,
         flexDirection:'row',
         alignItems:'center',
-        borderColor: '#D7D7D7',
-        borderBottomWidth:1,
+        //borderColor: '#D7D7D7',
+        //borderBottomWidth:1,
 
         padding:20,
 
@@ -61,11 +65,44 @@ export class Feed extends Component{
              </View>
 
     }
+
+
     componentDidMount(){
         this.fetchFeed();
     }
 
-    render()  {
+    requestURL(
+        url = "https://newscloud.io/posts?where={%22description%22:{%22contains%22:%22China%22}}&sort=when+DESC&",
+        count = this.state.count,
+        start = this.state.start
+    ) {
+        return (
+            `${url}limit=${count}&skip=${start}`
+        );
+    }
+
+    onEndReached() {
+
+
+
+            fetch(this.requestURL(), {
+
+            }).then((response)=>response.json())
+                .then((responseData)=> {
+
+                    let newStart = this.state.start + this.state.count;
+
+                    this.setState({
+                        articles: [...this.state.articles,...responseData],
+                        showProgress: false,
+                        start :newStart
+                    });
+                    console.log(this.state.dataSource);
+                })
+
+    }
+
+    render(){
 
         if(this.state.showProgress){
             return (
@@ -91,27 +128,45 @@ export class Feed extends Component{
 
             }}>
             <ListView style={{marginTop:20}}
-                      dataSource={this.state.dataSource}
-                      renderRow={this.renderRow.bind(this)} >
+                      dataSource={this.dataSource.cloneWithRows(this.state.articles)}
+                      renderRow={this.renderRow.bind(this)}
+                      renderSeparator={this._renderSeparator}
+                      onEndReached={this.onEndReached.bind(this)}
+                      onEndReachedThreshold={300}
 
+            >
             </ListView>
 
                        </View>
 
         );
     }
+
+    _renderSeparator(sectionID: number, rowID: number, adjacentRowHighlighted: bool) {
+    return (
+        <View
+            key={`${sectionID}-${rowID}`}
+            style={{
+          height: adjacentRowHighlighted ? 4 : 1,
+          backgroundColor: adjacentRowHighlighted ? '#ff0000' : '#CCCCCC',
+        }}
+        />
+    );
+}
+
     fetchFeed (){
-        var url = 'https://newscloud.io/posts?where={%22description%22:{%22contains%22:%22China%22}}&sort=when+DESC&limit=5&skip=0'
-        fetch(url, {
+        fetch(this.requestURL(), {
 
         }).then((response)=>response.json())
         .then((responseData)=> {
 
             console.log(responseData);
-
+            let newStart = this.state.start + this.state.count;
             this.setState({
-                dataSource: this.state.dataSource.cloneWithRows(responseData),
-                showProgress: false
+                articles:responseData,
+                showProgress: false,
+                start :newStart
+
             });
             console.log(this.state.dataSource);
         })
