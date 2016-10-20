@@ -13,7 +13,7 @@ import {
 } from 'react-native';
 
 import Login from './Login';
-
+import AppContainer from './AppContainer'
 export default class secondProject extends Component {
 
   constructor(props) {
@@ -25,7 +25,7 @@ export default class secondProject extends Component {
   render() {
     if(this.state.isLoggedIn){
       return (
-          <View><Text>New Page</Text></View>
+        <AppContainer></AppContainer>
       );
     }
     else{
