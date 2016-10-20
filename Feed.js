@@ -10,7 +10,8 @@ import {
     Text,
     View,
     ListView,
-ActivityIndicator
+ActivityIndicator,
+    TouchableHighlight
 } from 'react-native';
 
 export class Feed extends Component{
@@ -29,40 +30,96 @@ export class Feed extends Component{
 
     }
 
-    renderRow(rowData){
-        return <View style={{
+
+    _pressRow(rowID: number) {
+   console.log(rowID);
+}
+ highlightRow (sectionID: number, rowID: number){
+     console.log(" i clicked");
+}
+
+
+
+
+    renderRow = (rowData, sectionId, rowId) =>{
+
+        if (rowId % 2) {
+            return   <TouchableHighlight onPress={() => {
+          this._pressRow(rowId);
+          this.highlightRow(sectionId, rowId);
+        }}><View style={{
         flex:1,
         flexDirection:'row',
         alignItems:'center',
-        //borderColor: '#D7D7D7',
-        //borderBottomWidth:1,
-
+        backgroundColor: '#efefef',
         padding:20,
 
         }}>
-            <Text style={{
+                <Text style={{
             height:36,
             width:36,
-            borderRadius:18,
+
             backgroundColor: '#48bbec',
             color:'#FFF',
             fontSize:18,
             paddingTop:6,
             paddingLeft:5,
 
-        }}>{rowData.title.substring(0,2)}
+        }}>
+                    {rowData.title.substring(0,2)}
 
-            </Text>
-            <Text style={{
+                </Text>
+                <Text style={{
                         width:300,
-                        height:36,
+                       maxHeight:33,
+                        paddingLeft:10,
+
+                    }}>
+
+                    {rowData.title}
+
+                </Text>
+            </View></TouchableHighlight>
+        } else {
+            return   <TouchableHighlight onPress={() => {
+          this._pressRow(rowId);
+          this.highlightRow(sectionId, rowId);
+        }}><View style={{
+                flex:1,
+                flexDirection:'row',
+                alignItems:'center',
+                //borderColor: '#D7D7D7',
+                //borderBottomWidth:1,
+
+                padding:20,
+
+                }}>
+                <Text style={{
+            height:36,
+            width:36,
+
+            backgroundColor: '#48bbec',
+            color:'#FFF',
+            fontSize:18,
+            paddingTop:6,
+            paddingLeft:5,
+
+        }}>
+                    {rowData.title.substring(0,2)}
+
+                </Text>
+                <Text style={{
+                        width:300,
+                        height:33,
                         paddingLeft:10
                     }}>
 
-                    <Text > {rowData.title}</Text>
+                   {rowData.title}
 
-            </Text>
-             </View>
+                </Text>
+            </View></TouchableHighlight>
+        }
+
 
     }
 
@@ -132,7 +189,7 @@ export class Feed extends Component{
                       renderRow={this.renderRow.bind(this)}
                       renderSeparator={this._renderSeparator}
                       onEndReached={this.onEndReached.bind(this)}
-                      onEndReachedThreshold={300}
+                      onEndReachedThreshold={500}
 
             >
             </ListView>
