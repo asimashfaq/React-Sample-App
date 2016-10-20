@@ -13,6 +13,7 @@ TabBarIOS
 
 } from 'react-native';
 
+import Feed from './Feed'
 export class AppContainer extends Component{
     constructor(props){
         super(props);
@@ -30,7 +31,7 @@ export class AppContainer extends Component{
                 selected={this.state.selectedTab =='feed'}
                 onPress={()=>this.setState({selectedTab:'feed'})}
                 >
-                <Text style={styles.welcome}>Tab 1</Text>
+                <Feed />
             </TabBarIOS.Item>
 
                 <TabBarIOS.Item
