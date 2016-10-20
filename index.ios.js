@@ -15,15 +15,37 @@ import {
 import Login from './Login';
 
 export default class secondProject extends Component {
+
+  constructor(props) {
+    super(props);
+    this.state= {isLoggedIn:false};
+    this.onLogin = this.onLogin.bind(this);
+  }
+
   render() {
-    var message ="My second message";
-    return (
-        <Login onLogin={this.onLogin}/>
-    );
+    if(this.state.isLoggedIn){
+      return (
+          <View><Text>New Page</Text></View>
+      );
+    }
+    else{
+      return (
+          <Login onLogin={this.onLogin}/>
+      );
+    }
+    
+
   }
   onLogin(){
     console.log("Logged In");
+     this.setState(
+         {
+           isLoggedIn: true
+         }
+     );
+
   }
+
 }
 
 const styles = StyleSheet.create({
